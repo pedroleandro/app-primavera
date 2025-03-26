@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
+import api from './../api.js'
 
 const primeiroDiaMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
 const ultimoDiaMes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().slice(0, 10);
@@ -13,7 +14,7 @@ const dataFinal = ref(ultimoDiaMes);
 
 const carregarFiliais = async () => {
     try {
-        const response = await axios.get('/api/v1/dashboard/filiais');
+        const response = await api.get('/dashboard/filiais');
         filiais.value = [{ codigoFilial: 'Todas', filial: 'Todas' }, ...response.data];
     } catch (error) {
         console.error('Erro ao carregar filiais', error);
@@ -27,7 +28,7 @@ const carregarRanking = async () => {
     }
 
     try {
-        const response = await axios.get('/api/v1/dashboard/ranking-clientes-completo', {
+        const response = await api.get('/dashboard/ranking-clientes-completo', {
             params: {
                 filial: filialSelecionada.value,
                 dataInicial: dataInicial.value,

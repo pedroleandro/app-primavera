@@ -2,7 +2,6 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -19,13 +18,30 @@ const form = useForm({
     remember: false,
 });
 
-const submit = () => {
+const submit = async () => {
+
     form.transform(data => ({
         ...data,
         remember: form.remember ? 'on' : '',
+
     })).post(route('login'), {
         onFinish: () => form.reset('password'),
     });
+
+    try {
+        const response = await axios.post('/api/v1/auth/login', {
+            email: form.email,
+            password: form.password,
+        });
+
+        if (response.data.data.token) {
+            localStorage.setItem('token', response.data.data.token);
+            console.log(response.data.data.token)
+        }
+
+    } catch (error) {
+        console.error('Erro no login:', error);
+    }
 };
 </script>
 

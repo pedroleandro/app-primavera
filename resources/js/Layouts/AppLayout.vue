@@ -22,7 +22,27 @@ const switchToTeam = (team) => {
     });
 };
 
-const logout = () => {
+const logout = async () => {
+    try {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            console.warn('Nenhum token encontrado.');
+            return;
+        }
+
+        await axios.post('/api/v1/auth/logout', {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        localStorage.removeItem('token');
+        delete axios.defaults.headers.common['Authorization'];
+
+    } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+    }
     router.post(route('logout'));
 };
 </script>

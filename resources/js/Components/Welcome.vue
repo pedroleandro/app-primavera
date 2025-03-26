@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
+import api from './../api.js';
 
 const faturamentoAnual = ref(0);
 const faturamentoAtual = ref(0);
@@ -22,7 +23,7 @@ const filialSelecionada = ref('Todas');
 
 const carregarFiliais = async () => {
     try {
-        const response = await axios.get('/api/v1/dashboard/filiais');
+        const response = await api.get('/dashboard/filiais');
         filiais.value = [{ codigoFilial: '99', filial: 'Todas' }, ...response.data];
     } catch (error) {
         console.error('Erro ao carregar filiais', error);
@@ -30,11 +31,9 @@ const carregarFiliais = async () => {
 };
 
 const carregarDashboard = () => {
-    const filtros = {
-        filial: filialSelecionada.value
-    };
+    const filtros = { filial: filialSelecionada.value };
 
-    axios.get('/api/v1/dashboard/faturamento', { params: filtros })
+    api.get('/dashboard/faturamento', { params: filtros })
         .then(response => {
             const data = response.data;
             faturamentoAnual.value = parseFloat(data.faturamentoAnual);
@@ -44,35 +43,32 @@ const carregarDashboard = () => {
             console.error('Erro ao carregar os dados do Faturamento', error);
         });
 
-    axios.get('/api/v1/dashboard/faturamento-mes-anterior', { params: filtros })
+    api.get('/dashboard/faturamento-mes-anterior', { params: filtros })
         .then(response => {
-            const data = response.data;
-            faturamentoMesAnterior.value = parseFloat(data.faturamentoMesAnterior);
+            faturamentoMesAnterior.value = parseFloat(response.data.faturamentoMesAnterior);
         })
         .catch(error => {
-            console.error('Erro ao carregar os dados do Faturamento do Mes Anterior', error);
+            console.error('Erro ao carregar os dados do Faturamento do Mês Anterior', error);
         });
 
-    axios.get('/api/v1/dashboard/pedidos', { params: filtros })
+    api.get('/dashboard/pedidos', { params: filtros })
         .then(response => {
-            const data = response.data;
-            totalPedidos.value = data.totalPedidos;
-            totalPedidosMesAtual.value = data.totalPedidosMesAtual;
+            totalPedidos.value = response.data.totalPedidos;
+            totalPedidosMesAtual.value = response.data.totalPedidosMesAtual;
         })
         .catch(error => {
             console.error('Erro ao carregar os dados dos Pedidos', error);
         });
 
-    axios.get('/api/v1/dashboard/pedidos-mes-anterior', { params: filtros })
+    api.get('/dashboard/pedidos-mes-anterior', { params: filtros })
         .then(response => {
-            const data = response.data;
-            totalPedidosMesAnterior.value = data.totalPedidosMesAnterior;
+            totalPedidosMesAnterior.value = response.data.totalPedidosMesAnterior;
         })
         .catch(error => {
-            console.error('Erro ao carregar os dados dos Pedidos do Mes Anterior', error);
+            console.error('Erro ao carregar os dados dos Pedidos do Mês Anterior', error);
         });
 
-    axios.get('/api/v1/dashboard/ranking-clientes', { params: filtros })
+    api.get('/dashboard/ranking-clientes', { params: filtros })
         .then(response => {
             clienteRanking.value = response.data.map(cliente => ({
                 nomeCliente: cliente.nomeFantasiaCliente,
@@ -84,7 +80,7 @@ const carregarDashboard = () => {
             console.error('Erro ao carregar o ranking dos clientes', error);
         });
 
-    axios.get('/api/v1/dashboard/ranking-produtos', { params: filtros })
+    api.get('/dashboard/ranking-produtos', { params: filtros })
         .then(response => {
             produtosRanking.value = response.data.map(produto => ({
                 nomeProduto: produto.produto,
@@ -96,7 +92,7 @@ const carregarDashboard = () => {
             console.error('Erro ao carregar o ranking de produtos', error);
         });
 
-    axios.get('/api/v1/dashboard/ultimos-pedidos', { params: filtros })
+    api.get('/dashboard/ultimos-pedidos', { params: filtros })
         .then(response => {
             ultimosPedidos.value = response.data.map(pedido => ({
                 cliente: pedido.nomeFantasiaCliente,
