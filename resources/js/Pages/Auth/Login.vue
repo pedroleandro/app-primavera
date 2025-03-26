@@ -36,7 +36,6 @@ const submit = async () => {
 
         if (response.data.data.token) {
             localStorage.setItem('token', response.data.data.token);
-            console.log(response.data.data.token)
         }
 
     } catch (error) {
