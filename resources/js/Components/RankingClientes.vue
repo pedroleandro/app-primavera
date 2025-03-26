@@ -13,7 +13,7 @@ const dataFinal = ref(ultimoDiaMes);
 
 const carregarFiliais = async () => {
     try {
-        const response = await axios.get('/api/dashboard/filiais');
+        const response = await axios.get('/api/v1/dashboard/filiais');
         filiais.value = [{ codigoFilial: 'Todas', filial: 'Todas' }, ...response.data];
     } catch (error) {
         console.error('Erro ao carregar filiais', error);
@@ -27,7 +27,7 @@ const carregarRanking = async () => {
     }
 
     try {
-        const response = await axios.get('/api/dashboard/ranking-clientes-completo', {
+        const response = await axios.get('/api/v1/dashboard/ranking-clientes-completo', {
             params: {
                 filial: filialSelecionada.value,
                 dataInicial: dataInicial.value,

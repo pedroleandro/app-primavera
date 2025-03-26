@@ -12,7 +12,7 @@ const dataInicial = ref(format(new Date(hoje.getFullYear(), hoje.getMonth(), 1),
 const dataFinal = ref(format(new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0), 'yyyy-MM-dd'));
 
 const carregarFiliais = () => {
-    axios.get('/api/dashboard/filiais')
+    axios.get('/api/v1/dashboard/filiais')
         .then(response => {
             filiais.value = [{ codigoFilial: 'Todas', filial: 'Todas' }, ...response.data];
         })
@@ -22,7 +22,7 @@ const carregarFiliais = () => {
 };
 
 const carregarRanking = () => {
-    axios.get('/api/dashboard/ranking-produtos-completo', {
+    axios.get('/api/v1/dashboard/ranking-produtos-completo', {
         params: {
             filial: filialSelecionada.value,
             dataInicial: dataInicial.value,
