@@ -25,7 +25,6 @@ class DashboardController extends Controller
     {
         $anoAtual = Carbon::now()->year;
         $mesAtual = Carbon::now()->month;
-        $mesAnterior = 1;
 
         $filial = $request->input('filial');
 
@@ -36,7 +35,7 @@ class DashboardController extends Controller
         }
 
         $faturamentoAnual = $query->whereYear('dataPedidoFaturado', $anoAtual)
-        ->sum('valorFaturadoPedido');
+            ->sum('valorFaturadoPedido');
 
         $faturamentoAtual = $query->whereYear('dataPedidoFaturado', $anoAtual)
             ->whereMonth('dataPedidoFaturado', $mesAtual)
@@ -51,7 +50,10 @@ class DashboardController extends Controller
     public function getFaturamentoMesAnterior(Request $request)
     {
         $anoAtual = Carbon::now()->year;
-        $mesAnterior = Carbon::now()->subMonth()->month;
+        $mesAtual = Carbon::now()->month;
+
+        $mesAnterior = $mesAtual === 1 ? 12 : $mesAtual - 1;
+        $anoAnterior = $mesAnterior === 12 ? $anoAtual - 1 : $anoAtual;
 
         $filial = $request->input('filial');
 
@@ -61,7 +63,7 @@ class DashboardController extends Controller
             $query->where('filial', $filial);
         }
 
-        $faturamentoMesAnterior = $query->whereYear('dataPedidoFaturado', $anoAtual)
+        $faturamentoMesAnterior = $query->whereYear('dataPedidoFaturado', $anoAnterior)
             ->whereMonth('dataPedidoFaturado', $mesAnterior)
             ->sum('valorFaturadoPedido');
 
@@ -95,7 +97,10 @@ class DashboardController extends Controller
     public function getPedidosMesAnterior(Request $request)
     {
         $anoAtual = Carbon::now()->year;
-        $mesAnterior = Carbon::now()->subMonth()->month;
+        $mesAtual = Carbon::now()->month;
+
+        $mesAnterior = $mesAtual === 1 ? 12 : $mesAtual - 1;
+        $anoAnterior = $mesAnterior === 12 ? $anoAtual - 1 : $anoAtual;
 
         $filial = $request->input('filial');
 
@@ -105,7 +110,7 @@ class DashboardController extends Controller
             $query->where('filial', $filial);
         }
 
-        $totalPedidosMesAnterior = $query->whereYear('dataPedido', $anoAtual)
+        $totalPedidosMesAnterior = $query->whereYear('dataPedido', $anoAnterior)
             ->whereMonth('dataPedido', $mesAnterior)
             ->count('numeroPedido');
 
