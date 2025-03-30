@@ -49,7 +49,7 @@ const submit = async () => {
 
     <AuthenticationCard>
         <template #logo>
-            <img src="./../../../../public/logo2.png" alt="Logo" class="h-40 w-auto mx-auto">
+            <AuthenticationCardLogo />
         </template>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
