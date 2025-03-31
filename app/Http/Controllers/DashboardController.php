@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -28,18 +26,21 @@ class DashboardController extends Controller
 
         $filial = $request->input('filial');
 
-        $query = DB::table('vendas_clientes');
+        $query = DB::table('faturamento');
 
         if (!empty($filial) && $filial !== 'Todas') {
-            $query->where('filial', $filial);
+            $query->whereIn('codigoFilial', explode(',', $filial));
         }
 
-        $faturamentoAnual = $query->whereYear('dataPedidoFaturado', $anoAtual)
-            ->sum('valorFaturadoPedido');
+        $faturamentoAnual = $query->whereYear('dataInicial', $anoAtual)
+            ->whereYear('dataFinal', $anoAtual)
+            ->sum('faturamento');
 
-        $faturamentoAtual = $query->whereYear('dataPedidoFaturado', $anoAtual)
-            ->whereMonth('dataPedidoFaturado', $mesAtual)
-            ->sum('valorFaturadoPedido');
+        $faturamentoAtual = $query->whereYear('dataInicial', $anoAtual)
+            ->whereMonth('dataInicial', $mesAtual)
+            ->whereYear('dataFinal', $anoAtual)
+            ->whereMonth('dataFinal', $mesAtual)
+            ->sum('faturamento');
 
         return response()->json([
             'faturamentoAnual' => $faturamentoAnual,
@@ -57,20 +58,23 @@ class DashboardController extends Controller
 
         $filial = $request->input('filial');
 
-        $query = DB::table('vendas_clientes');
+        $query = DB::table('faturamento');
 
         if (!empty($filial) && $filial !== 'Todas') {
-            $query->where('filial', $filial);
+            $query->whereIn('codigoFilial', explode(',', $filial));
         }
 
-        $faturamentoMesAnterior = $query->whereYear('dataPedidoFaturado', $anoAnterior)
-            ->whereMonth('dataPedidoFaturado', $mesAnterior)
-            ->sum('valorFaturadoPedido');
+        $faturamentoMesAnterior = $query->whereYear('dataInicial', $anoAnterior)
+            ->whereMonth('dataInicial', $mesAnterior)
+            ->whereYear('dataFinal', $anoAnterior)
+            ->whereMonth('dataFinal', $mesAnterior)
+            ->sum('faturamento');
 
         return response()->json([
             'faturamentoMesAnterior' => $faturamentoMesAnterior
         ]);
     }
+
 
     public function getPedidos(Request $request)
     {
